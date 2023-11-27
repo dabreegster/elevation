@@ -48,3 +48,31 @@ impl<R: Read + Seek + Send> GeoTiffElevation<R> {
         (x1, y1, x2, y2)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::GeoTiffElevation;
+    use rand::Rng;
+
+    // TODO Use criterion?
+    #[test]
+    fn benchmark() {
+        let seattle = "/home/dabreegster/abstreet/data/input/shared/elevation/seattle.tif";
+        let uk = "/home/dabreegster/abstreet/data/input/shared/elevation/UK-dem-50m-4326.tif";
+        let mut elevation = GeoTiffElevation::new(std::io::BufReader::new(
+            std::fs::File::open(seattle).unwrap(),
+        ));
+
+        let iterations = 500_000;
+
+        let (x1, y1, x2, y2) = elevation.get_bounds();
+        println!("Input ranges from {x1}, {y1} to {x2}, {y2}");
+        println!("Running {iterations} iterations");
+        let mut rng = rand::thread_rng();
+        for _ in 0..iterations {
+            let lon = rng.gen_range(x1..x2);
+            let lat = rng.gen_range(y1..y2);
+            elevation.get_height_for_lon_lat(lon, lat);
+        }
+    }
+}
