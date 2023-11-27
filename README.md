@@ -12,3 +12,4 @@ Explore options for reading elevation data in pure Rust
 	- Just use the bbox bounds to generate a benchmark
 - Do we need to support more CRS or can we just transform stuff?
 - What should we do for contour cases? (Probably a different approach)
+- Should this library exist at all, or should we just add some helper methods upstream to georaster?
