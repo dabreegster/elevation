@@ -1,0 +1,8 @@
+[package]
+name = "elevation"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+fs-err = "2.11.0"
+georaster = { git = "https://github.com/pka/georaster" }
