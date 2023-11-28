@@ -6,7 +6,8 @@ This is really early work, but can already be used [in A/B
 Street](https://github.com/a-b-street/abstreet/issues/82) to calculate the
 height at intersections. This approach possibly replaces
 [elevation_lookups](https://github.com/eldang/elevation_lookups), a much more
-flexible Python and GDAL-based solution.
+flexible Python and GDAL-based solution. Those dependencies are quite
+heavyweight and have portability problems, even with Docker.
 
 The approach in this repo is to stay as simple as possible, and only handle
 GeoTIFF files in EPSG:4326, so that no dependencies are needed for coordinate
