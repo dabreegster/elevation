@@ -97,7 +97,30 @@ mod tests {
         for _ in 0..iterations {
             let lon = rng.gen_range(x1..x2);
             let lat = rng.gen_range(y1..y2);
-            elevation.get_height_for_lon_lat(lon, lat);
+            if let Some(height) = elevation.get_height_for_lon_lat(lon, lat) {
+                if !height.is_finite() {
+                    panic!("lon {lon}, lat {lat} yielded invalid {height}");
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn exact_point() {
+        let uk = "/home/dabreegster/abstreet/data/input/shared/elevation/UK-dem-50m-4326.tif";
+        let mut elevation =
+            GeoTiffElevation::new(std::io::BufReader::new(std::fs::File::open(uk).unwrap()));
+
+        // Make sure the bilinear interpolation doesn't break for input directly on a corner
+        for (dx, dy) in [(0.0, 0.0), (0.1, 0.0), (0.1, 0.1), (0.0, 0.1)] {
+            // Manually found some point that isn't at 0 meters
+            let x = elevation.top_left[0] + (11382.0 + dx) * elevation.pixel_size[0];
+            let y = elevation.top_left[1] + (7550.0 + dy) * elevation.pixel_size[1];
+
+            let height = elevation.get_height_for_lon_lat(x, y).unwrap();
+            if !height.is_finite() {
+                panic!("for dx {dx} and dy {dy}, got {height}");
+            }
         }
     }
 }
