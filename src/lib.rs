@@ -27,15 +27,16 @@ impl<R: Read + Seek + Send> GeoTiffElevation<R> {
         let x = (lon - self.top_left[0]) / self.pixel_size[0];
         let y = (lat - self.top_left[1]) / self.pixel_size[1];
 
+        // For x2 and y2, don't use ceil(), in case x == x.floor(). So x2 - x1 == 1 always.
         let x1 = x.floor();
-        let x2 = x.ceil();
+        let x2 = x1 + 1.0;
         let y1 = y.floor();
-        let y2 = y.ceil();
+        let y2 = y1 + 1.0;
 
         // Repeated linear interpolation formula from
-        // https://en.wikipedia.org/wiki/Bilinear_interpolation
-        let fraction = 1.0 / ((x2 - x1) * (y2 - y1));
-        let term1 = fraction * self.get_value(x1, y1)? * (x2 - x) * (y2 - y);
+        // https://en.wikipedia.org/wiki/Bilinear_interpolation, with the assumption above that x2
+        // - x1 == y2 - y1 == 1
+        let term1 = self.get_value(x1, y1)? * (x2 - x) * (y2 - y);
         let term2 = self.get_value(x2, y1)? * (x - x1) * (y2 - y);
         let term3 = self.get_value(x1, y2)? * (x2 - x) * (y - y1);
         let term4 = self.get_value(x2, y2)? * (x - x1) * (y - y1);
