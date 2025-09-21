@@ -1,10 +1,10 @@
 [package]
 name = "elevation"
 version = "0.1.0"
-edition = "2021"
+edition = "2024"
 
 [dependencies]
-georaster = { git = "https://github.com/pka/georaster", rev = "dca2d8b7c4e40c6d3b83f29352af5c04083a366b" }
+georaster = "0.2.0"
 
 [dev-dependencies]
 rand = "0.8.5"
